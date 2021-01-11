@@ -1,29 +1,39 @@
-import React from 'react';
-import { FlatList, Button, Platform } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import React from "react";
+import {FlatList, Button, Platform} from "react-native";
+import {useSelector, useDispatch} from "react-redux";
+import {HeaderButtons, Item} from "react-navigation-header-buttons";
 
-import HeaderButton from '../../components/UI/HeaderButton';
-import ProductItem from '../../components/shop/ProductShop';
-import Colors from '../../constants/Colors';
-import * as productsActions from '../../store/actions/products';
+import HeaderButton from "../../components/UI/HeaderButton";
+import ProductItem from "../../components/shop/ProductShop";
+import Colors from "../../constants/Colors";
+import * as productsActions from "../../store/actions/products";
 
-const UserProductsScreen = props => {
-  const userProducts = useSelector(state => state.products.userProducts);
+const UserProductsScreen = (props) => {
+  const userProducts = useSelector((state) => state.products.userProducts);
   const dispatch = useDispatch();
-
+  const editProductHandler = (id) => {
+    props.navigation.navigate("EditProducts", {
+      productId: id,
+    });
+  };
   return (
     <FlatList
       data={userProducts}
-      keyExtractor={item => item.id}
-      renderItem={itemData => (
+      keyExtractor={(item) => item.id}
+      renderItem={(itemData) => (
         <ProductItem
           image={itemData.item.imageUrl}
           title={itemData.item.title}
           price={itemData.item.price}
           onSelect={() => {}}
         >
-          <Button color={Colors.primary} title="Edit" onPress={() => {}} />
+          <Button
+            color={Colors.primary}
+            title="Edit"
+            onPress={() => {
+              editProductHandler(itemData.item.id);
+            }}
+          />
           <Button
             color={Colors.primary}
             title="Delete"
@@ -37,20 +47,31 @@ const UserProductsScreen = props => {
   );
 };
 
-UserProductsScreen.navigationOptions = navData => {
+UserProductsScreen.navigationOptions = (navData) => {
   return {
-    headerTitle: 'Your Products',
+    headerTitle: "Your Products",
     headerLeft: (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
           title="Menu"
-          iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+          iconName={Platform.OS === "android" ? "md-menu" : "ios-menu"}
           onPress={() => {
             navData.navigation.toggleDrawer();
           }}
         />
       </HeaderButtons>
-    )
+    ),
+    headerRight: (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="Cart"
+          iconName={Platform.OS === "android" ? "md-cart" : "ios-cart"}
+          onPress={() => {
+            navData.navigation.navigate("EditProducts");
+          }}
+        />
+      </HeaderButtons>
+    ),
   };
 };
 

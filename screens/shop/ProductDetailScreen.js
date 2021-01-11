@@ -4,10 +4,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import * as cartAction from '../../store/actions/cart'
 
 const ProductDetailScreen = (props) => {
-  const productID = props.navigation.getParam('productID')
+  const productID = props.navigation.getParam('productId')
+  console.log(productID);
   const product = useSelector(state => state.products.availableProducts.find(prod => prod.id === productID))
   const dispatch = useDispatch();
-
   return (
     <ScrollView>
       <Image style={styles.image} source={{ uri: product.imageUrl }} />

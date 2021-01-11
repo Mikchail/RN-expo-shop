@@ -21,15 +21,16 @@ const store = createStore(rootReducer);
 
 export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
-  const fetchFont = () => {
+  const fetchFonts = () => {
     return Font.loadAsync({
-      Ionicons: require('./node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf'),
+      'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+      'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf')
     });
   };
   if (!fontLoaded) {
     return (
       <AppLoading
-        startAsync={fetchFont}
+        startAsync={fetchFonts}
         onFinish={() => {
           setFontLoaded(true);
         }}
