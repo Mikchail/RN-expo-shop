@@ -1,32 +1,34 @@
-
 import React, { useState } from 'react';
-import 'react-native-gesture-handler'
 import { createStore, combineReducers } from 'redux';
 import { Provider } from 'react-redux';
+import { AppLoading } from 'expo';
+import * as Font from 'expo-font';
 
 import productsReducer from './store/reducers/products';
 import cartReducer from './store/reducers/cart';
 import ordersReducer from './store/reducers/orders';
 import ShopNavigator from './navigation/ShopNavigator';
-import { AppLoading } from 'expo';
-import * as Font from 'expo-font';
 
 const rootReducer = combineReducers({
   products: productsReducer,
   cart: cartReducer,
-  orders: ordersReducer,
+  orders: ordersReducer
 });
 
 const store = createStore(rootReducer);
 
+const fetchFonts = async () => {
+  const font = await Font.loadAsync({
+    'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
+    'ionicons': require('./assets/fonts/Ionicons.ttf'),
+  });
+  return font
+};
+
 export default function App() {
   const [fontLoaded, setFontLoaded] = useState(false);
-  const fetchFonts = () => {
-    return Font.loadAsync({
-      'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
-      'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf')
-    });
-  };
+
   if (!fontLoaded) {
     return (
       <AppLoading
