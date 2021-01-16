@@ -57,7 +57,7 @@ const CartScreen = props => {
     </View>
   );
 };
-
+export const screenOptions = {} 
 const styles = StyleSheet.create({
   screen: {
     margin: 20

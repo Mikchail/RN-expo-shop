@@ -1,31 +1,116 @@
-export const DELETE_PRODUCT = 'DELETE_PRODUCT';
-export const CREATE_PRODUCT = 'CREATE_PRODUCT';
-export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
+import Product from "../../models/product";
+import {apiService} from "../../utils/api";
 
-export const deleteProduct = productId => {
-  return { type: DELETE_PRODUCT, pid: productId };
+export const DELETE_PRODUCT = "DELETE_PRODUCT";
+export const CREATE_PRODUCT = "CREATE_PRODUCT";
+export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
+export const SET_PRODUCTS = "SET_PRODUCTS";
+
+export const deleteProduct = (productId) => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token;
+    const response = await apiService.delete(productId, token);
+
+    if (!response.ok) {
+      throw new Error("Something went wrong!");
+    }
+    dispatch({type: DELETE_PRODUCT, pid: productId});
+  };
 };
 
-export const createProduct = (title, description, imageUrl, price) => {
-  return {
-    type: CREATE_PRODUCT,
-    productData: {
-      title,
-      description,
-      imageUrl,
-      price
+export const fetchProducts = () => {
+  return async (dispatch, getState) => {
+    // any async code you want!
+    const userId = getState().auth.userId;
+
+    try {
+      const response = await apiService.get();
+
+      if (!response.ok) {
+        throw new Error("Something went wrong!");
+      }
+
+      const resData = await response.json();
+      const loadedProducts = [];
+
+      for (const key in resData) {
+        loadedProducts.push(
+          new Product(
+            key,
+            resData[key].ownerId,
+            resData[key].title,
+            resData[key].imageUrl,
+            resData[key].description,
+            resData[key].price
+          )
+        );
+      }
+
+      dispatch({
+        type: SET_PRODUCTS,
+        products: loadedProducts,
+        userProducts: loadedProducts.filter((prod) => prod.ownerId === userId),
+      });
+    } catch (err) {
+      // send to custom analytics server
+      throw err;
     }
   };
 };
 
-export const updateProduct = (id, title, description, imageUrl) => {
-  return {
-    type: UPDATE_PRODUCT,
-    pid: id,
-    productData: {
+export const createProduct = (title, description, imageUrl, price) => {
+  return async (dispatch, getState) => {
+    // any async code you want!
+    const token = getState().auth.token;
+    const userId = getState().auth.userId;
+    const response = await apiService.createProduct(
       title,
       description,
       imageUrl,
+      price,
+      token,
+      userId
+    );
+
+    const resData = await response.json();
+    console.log(resData);
+    dispatch({
+      type: CREATE_PRODUCT,
+      productData: {
+        id: resData.name,
+        title,
+        description,
+        imageUrl,
+        price,
+        ownerId: userId,
+      },
+    });
+  };
+};
+
+export const updateProduct = (id, title, description, imageUrl) => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token;
+    const response = await apiService.updateProduct(
+      id,
+      title,
+      description,
+      imageUrl,
+      token
+    );
+
+    if (!response.ok) {
+      throw new Error("Something went wrong!");
     }
+
+    dispatch({
+      type: UPDATE_PRODUCT,
+      pid: id,
+      productData: {
+        title,
+        description,
+        imageUrl,
+      },
+    });
   };
 };
