@@ -1,5 +1,5 @@
 import React from "react";
-import {FlatList, Button, Platform} from "react-native";
+import {FlatList, Button, Platform, Alert} from "react-native";
 import {useSelector, useDispatch} from "react-redux";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 
@@ -38,7 +38,23 @@ const UserProductsScreen = (props) => {
             color={Colors.primary}
             title="Delete"
             onPress={() => {
-              dispatch(productsActions.deleteProduct(itemData.item.id));
+              Alert.alert(
+                "Alert Title",
+                "My Alert Msg",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel",
+                  },
+                  { 
+                    text: "OK",
+                    onPress: () =>
+                      dispatch(productsActions.deleteProduct(itemData.item.id)),
+                  },
+                ],
+                {cancelable: false}
+              );
             }}
           />
         </ProductItem>

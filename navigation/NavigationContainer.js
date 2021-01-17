@@ -1,15 +1,18 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import {NavigationContainer} from '@react-navigation/native'
-import {ShopNavigator} from './ShopNavigator';
+import React from "react";
+import {useSelector} from "react-redux";
+import {NavigationContainer} from "@react-navigation/native";
+import {ShopNavigator, AuthNavigator} from "./ShopNavigator";
+import StartupScreen from "../screens/StartupScreen";
 
-
-const AppNavigator = props => {
-  const isAuth = useSelector(state => !!state.auth.token);
+const AppNavigator = (props) => {
+  const isAuth = useSelector((state) => !!state.auth.token);
+  const didTryAutoLogin = useSelector((state) => state.auth.didTryAutoLogin);
 
   return (
     <NavigationContainer>
-      <ShopNavigator/>
+      {isAuth && <ShopNavigator />}
+      {!isAuth && didTryAutoLogin && <AuthNavigator />}
+      {!isAuth && !didTryAutoLogin && <StartupScreen />}
     </NavigationContainer>
   );
 };

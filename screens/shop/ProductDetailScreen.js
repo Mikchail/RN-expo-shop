@@ -4,7 +4,8 @@ import {useSelector, useDispatch} from "react-redux";
 import * as cartAction from "../../store/actions/cart";
 
 const ProductDetailScreen = (props) => {
-  const productID = props.navigation.getParam("productId");
+  const params = props.route?.params ? props.route.params : {};
+  const productID = params.productId;
   console.log(productID);
   const product = useSelector((state) =>
     state.products.availableProducts.find((prod) => prod.id === productID)
@@ -47,9 +48,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export const screenOptions = (navData,route) => {
+export const screenOptions = (navData) => {
   return {
-    headerTitle: route.params.productTitle,
+    headerTitle: navData.route.params.productTitle,
   };
 };
 
